@@ -14,6 +14,7 @@ from app.di import AppProvider
 from app.dialogs.main_dialog import dialog
 from app.handlers import callbacks as callbacks_handlers, commands as commands_handlers, messages as messages_handlers
 from app.services.chatgpt import ChatService
+from app.middlewares import AntiFloodMiddleware
 
 
 async def on_startup(_: Dispatcher, chat: ChatService):
@@ -25,6 +26,8 @@ async def main() -> None:
 
     bot = Bot(token=settings.bot_token.get_secret_value())
     dp = Dispatcher(storage=MemoryStorage())
+
+    dp.message.middleware(AntiFloodMiddleware(delay=5.0))
 
     container = make_async_container(AppProvider())
     setup_dishka(container=container, router=dp)

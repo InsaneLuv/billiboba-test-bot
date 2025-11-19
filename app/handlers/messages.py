@@ -24,7 +24,7 @@ async def handle_text(message: Message, chat: FromDishka[ChatService]):
 
     if "🆘" in text.strip().lower():
         await message.answer(
-            "Отправьте текст и я отвечу!\n"
+            "Отправьте текст и я отвечу.\n"
             "Кнопка 'Новый запрос' сбросит историюб диалога.",
             reply_markup=main_reply_keyboard(),
         )
@@ -36,5 +36,9 @@ async def handle_text(message: Message, chat: FromDishka[ChatService]):
         await message.answer("Не удалось обработать ваше сообщение. Попробуйте позже.")
         return
 
-    await message.answer(reply, reply_markup=main_reply_keyboard(), parse_mode=ParseMode.MARKDOWN_V2)
-
+    # попробовать ответить в MARKDOWN, ЕСЛИ не вышло - ответить в HTML
+    try:
+        await message.answer(reply, reply_markup=main_reply_keyboard(), parse_mode=ParseMode.MARKDOWN)
+    except Exception:
+        await message.answer(reply, reply_markup=main_reply_keyboard(), parse_mode=ParseMode.HTML)
+    return
